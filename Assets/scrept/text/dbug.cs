@@ -1,9 +1,12 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Threading;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class TaskWithCancelTest : MonoBehaviour
+sing UnityEngine;
+using Cysharp.Threading.Tasks;
+using System.Threading;
+
+public class UniTaskExample : MonoBehaviour
 {
     private CancellationTokenSource cancellationTokenSource;
 
@@ -16,26 +19,26 @@ public class TaskWithCancelTest : MonoBehaviour
     {
         StopLogging(); // 既に実行中なら停止（多重起動を防ぐ）
         cancellationTokenSource = new CancellationTokenSource();
-        Task.Run(() => LogEverySecond(cancellationTokenSource.Token));
+        LogEverySecond(cancellationTokenSource.Token).Forget();
     }
 
-    async Task LogEverySecond(CancellationToken token)
+    private async UniTaskVoid LogEverySecond(CancellationToken token)
     {
         try
         {
             while (!token.IsCancellationRequested)
             {
-                Debug.Log("Task 実行中：" + Time.time);
-                await Task.Delay(1000, token); // キャンセル可能な遅延
+                Debug.Log("UniTask 実行中：" + Time.time);
+                await UniTask.Delay(1000, cancellationToken: token); // キャンセル可能な遅延
             }
         }
-        catch (TaskCanceledException)
+        catch (System.OperationCanceledException)
         {
-            Debug.Log("Task がキャンセルされました");
+            Debug.Log("UniTask がキャンセルされました");
         }
         finally
         {
-            Debug.Log("Task ループが完全に終了しました");
+            Debug.Log("UniTask ループが完全に終了しました");
         }
     }
 
@@ -46,7 +49,7 @@ public class TaskWithCancelTest : MonoBehaviour
             cancellationTokenSource.Cancel(); // タスクをキャンセル
             cancellationTokenSource.Dispose();
             cancellationTokenSource = null;
-            Debug.Log("Task 停止！");
+            Debug.Log("UniTask 停止！");
         }
     }
 }
