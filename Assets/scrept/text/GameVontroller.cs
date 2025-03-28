@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -56,7 +57,7 @@ public class GameController : MonoBehaviour
                 SpawnRandomButton();
             }
 
-            yield return new WaitForSeconds(3f); // **修正為 3 秒刷新**
+            yield return new WaitForSeconds(2f); // **修正為 2 秒刷新**
         }
     }
 
